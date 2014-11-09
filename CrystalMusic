@@ -1,0 +1,67 @@
+using UnityEngine;
+using System.Collections;
+
+public class MusicCrystal : MonoBehaviour
+{
+	
+	public AudioSource sound;
+	public float BPM;
+	public GameObject toggleBox;
+	public Sprite activeCrystalSprite;// ?
+	
+	
+	private bool activated = false;
+	private int crystalNumber;
+	
+	
+	
+	// Use this for initialization
+	void Start ()
+	{
+		Debug.Log ("Cristal " + toggleBox.name + " init");
+		
+		
+	}
+	
+	// Update is called once per frame
+	void Update ()
+	{
+		if ((activated) && (MasterVars._crystalCount > crystalNumber)) {
+			sound.Stop ();
+			CancelInvoke();
+			toggleBox.SetActive (true);
+		}
+	}
+	
+	void toggleBlocks ()
+	{
+		Debug.Log ("Toggle! " + MasterVars._MUSIC);
+		if (toggleBox.activeSelf) {
+			toggleBox.SetActive (false);
+		} else {
+			toggleBox.SetActive (true);
+		}
+	}
+	
+	// player got the crystal
+	void OnCollisionEnter2D (Collision2D other)
+	{
+		
+		
+		// if player touches
+		if ((other.gameObject.tag == "Player") && (activated == false)) {
+			
+			MasterVars._crystalCount++;
+			crystalNumber = MasterVars._crystalCount;
+			MasterVars._MUSIC = toggleBox.name;
+			float interval = 60f / BPM;
+			Debug.Log ("Collide: interval =" + interval);
+			activated = true;
+			sound.Play ();
+			InvokeRepeating ("toggleBlocks", interval, interval);
+			
+			
+		}
+		
+	}
+}
